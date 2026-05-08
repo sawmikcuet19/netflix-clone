@@ -1,0 +1,61 @@
+<div class="auth-page">
+    <div class="bg"></div>
+
+    <div class="logo">
+        <mat-icon class="logo-icon">movie</mat-icon>
+        <span class="logo-text">MovieSceen</span>
+    </div>
+
+    <mat-card class="auth-card" appearance="outlined">
+        <h1>Sign In</h1>
+        <p class="subtitle">Log in to your account to continue</p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="submit()" class="form">
+            <mat-form-field appearance="outline" class="field">
+                <mat-label>Email address</mat-label>
+                <input matInput type="email" formControlName="email" />
+                <mat-icon matPrefix>email</mat-icon>
+
+                <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                    Email is required.
+                </mat-error>
+                <mat-error *ngIf="loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched">
+                    Please enter a valid email address.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
+                <mat-icon matPrefix>lock</mat-icon>
+
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button"
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+
+                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                    Password is required.
+                </mat-error>
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" class="sign-in-btn" type="submit"
+                [disabled]="loading || loginForm.invalid">
+                {{ loading ? 'Signing in...' : 'Sign In' }}
+            </button>
+
+            <button type="button" class="link-btn resend" *ngIf="showResendLink" (click)="resendVerification()">
+                Resend verification email
+            </button>
+
+            <button type="button" class="link-btn forgot" (click)="forgot()">
+                Forgot password
+            </button>
+
+            <div class="signup">
+                <span>New to MovieSceen?</span>
+                <a routerLink="/signup" class="link">Sign Up now</a>
+            </div>
+        </form>
+    </mat-card>
+</div>

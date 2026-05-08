@@ -1,0 +1,71 @@
+import { Component, OnInit } from '@angular/core';
+import { Form, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../shared/shared/auth-service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NotificationService } from '../shared/shared/notification-service';
+import { ErrorHandlerService } from '../shared/shared/error-handler-service';
+
+@Component({
+  selector: 'app-signup',
+  standalone: false,
+  templateUrl: './signup.html',
+  styleUrl: './signup.css',
+})
+export class Signup implements OnInit{
+  hidePassword = true;
+  hideConfirmPassword = true;
+  signupForm!: FormGroup;
+  loading = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private notification: NotificationService,
+    private errorHandlerService: ErrorHandlerService
+  ) {
+    this.signupForm = this.fb.group({
+      fullName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required, this.authService.passwordMatchValidator('password')]]
+    });
+  }
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.authService.redirectBasedOnRole();
+    }
+
+    const email = this.route.snapshot.queryParams['email'];
+    if (email) {
+      this.signupForm.patchValue({ email: email });
+      console.log('Prefilled email from query param: ', email);
+    }
+
+  }
+
+  submit() {
+      this.loading = true;
+      const formData = this.signupForm.value;
+
+      const data = {
+        fullName: formData.fullName,
+        email: formData.email?.trim().toLowerCase(),
+        password: formData.password
+      };
+
+      this.authService.signup(data).subscribe({
+        next: (response: any) => {
+          this.loading = false;
+          this.notification.success(response?.message || 'Signup successful! Please check your email to verify your account.');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          this.loading = false;
+          this.errorHandlerService.handle(err, 'Signup failed. Please try again.');
+        }
+      });
+    }
+}

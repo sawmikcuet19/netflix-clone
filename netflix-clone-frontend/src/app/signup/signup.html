@@ -1,0 +1,86 @@
+<div class="signup-page">
+    <div class="bg"></div>
+    <div class="logo">
+        <mat-icon class="logo-icon">movie</mat-icon>
+        <span class="logo-text">MovieSceen</span>
+    </div>
+
+    <mat-card class="signup-card" appearance="outlined">
+        <h1 class="">Sign up</h1>
+        <p class="subtitle">Create your account to get started</p>
+
+        <form [formGroup]="signupForm" (ngSubmit)="submit()" class="form">
+            <mat-form-field appearance="outline" class="field">
+                <mat-label>Email address</mat-label>
+                <input matInput type="email" formControlName="email" />
+                <mat-icon matPrefix>email</mat-icon>
+
+                <mat-error *ngIf="signupForm.get('email')?.hasError('required')">
+                    Email is required.
+                </mat-error>
+                <mat-error *ngIf="signupForm.get('email')?.hasError('email') && signupForm.get('email')?.touched">
+                    Please enter a valid email address.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+                <mat-label>Full Name</mat-label>
+                <input matInput type="text" formControlName="fullName" />
+                <mat-icon matPrefix>person</mat-icon>
+
+                <mat-error *ngIf="signupForm.get('fullName')?.hasError('required')">
+                    Full name is required.
+                </mat-error>
+                <mat-error
+                    *ngIf="signupForm.get('fullName')?.hasError('minlength') && signupForm.get('fullName')?.touched">
+                    Full name must be at least 2 characters long.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
+                <mat-icon matPrefix>lock</mat-icon>
+                
+                <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+
+                <mat-error *ngIf="signupForm.get('password')?.hasError('required')">
+                    Password is required.
+                </mat-error>
+                <mat-error
+                    *ngIf="signupForm.get('password')?.hasError('minlength') && signupForm.get('password')?.touched">
+                    Password must be at least 6 characters long.
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="field">
+                <mat-label>Confirm Password</mat-label>
+                <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" />
+                <mat-icon matPrefix>lock_reset</mat-icon>
+                
+                <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+                  <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+
+                <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('required')">
+                    Please confirm your password.
+                </mat-error>
+                <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('passwordMismatch') && signupForm.get('confirmPassword')?.touched">
+                    Passwords do not match.
+                </mat-error>
+            </mat-form-field>
+
+            <button mat-flat-button color="primary" class="sign-up-btn" type="submit"
+                [disabled]="!signupForm.valid || loading">
+                {{ loading ? 'Signing Up...' : 'Sign Up' }}
+            </button>
+
+            <div class="signin">
+                <span>Already have an account?</span>
+                <a routerLink="/login" class="link">Sign In</a>
+            </div>
+        </form>
+    </mat-card>
+</div>
